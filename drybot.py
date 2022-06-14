@@ -166,6 +166,7 @@ def c_call(update: Updater, context: CallbackContext):
         update.message.reply_html(query.bot_msg, False)
         try:
             update.message.reply_html(query.bot_msg_back, False)
+            
         except AttributeError:
             pass
     
@@ -175,15 +176,15 @@ def c_call(update: Updater, context: CallbackContext):
         if check_multiple(json) != 0:
             bot_msg = multiple_results_list(json)
             update.message.reply_html(bot_msg, False)
-    #clear bot history, otherwise mutliples in subsequent requests sum together 
+    # clear bot history, otherwise mutliples in subsequent requests sum together 
             bot_msg = ''
-    #if only one card great, instantiate a Card and backfill with JSON crap we stole from the internet
+    # if only one card great, instantiate a Card and backfill with JSON crap we stole from the internet
         else:
             query = Card(json)
-            #Python wrapper just introduces pretty function calls in place of the Telegram module chaos. Can be used interchangably
             update.message.reply_html(query.bot_msg, False)
             try:
                 update.message.reply_html(query.bot_msg_back, False)
+
             except AttributeError:
                 pass
 
@@ -192,23 +193,22 @@ def rulings_call(update: Updater, context: CallbackContext):
     json = search_scryfall("!\""+card_search_input+"\"")
     try:
         query = Card(json)
-        #Python wrapper just introduces pretty function calls in place of the Telegram module chaos. Can be used interchangably
         json = requests.get(url=str(query.rulingsURI)).json()
         bot_msg = ''
         for rulings in json['data']:
             rule = str(rulings['comment'])
             bot_msg += f"{rule}\n\n"
         update.message.reply_html(bot_msg, False)
+
     except AttributeError:
             pass
+
     except KeyError:
         json = search_scryfall(card_search_input)
         if check_multiple(json) != 0:
             bot_msg = multiple_results_list(json)
             update.message.reply_html(bot_msg, False)
-    #clear bot history, otherwise mutliples in subsequent requests sum together 
             bot_msg = ''
-        #if only one card great, instantiate a Card and backfill with JSON crap we stole from the internet
         else:
             query = Card(json)
             json = requests.get(url=str(query.rulingsURI)).json()
@@ -219,8 +219,6 @@ def rulings_call(update: Updater, context: CallbackContext):
             update.message.reply_html(bot_msg, False)
 
 def random_call(update: Updater, context: CallbackContext):
-#Repeate of similar stupid shit for card_call function
-#Scryfall random result has diffierent JSON structure
     json = requests.get(url="https://api.scryfall.com/cards/random")
     json = json.json()
     try:
@@ -233,10 +231,10 @@ def random_call(update: Updater, context: CallbackContext):
             random_call(update, context)
         else:
             pass
+        
     except KeyError:
         del card
         random_call(update, context)
-    #Python wrapper just introduces pretty function calls in place of the Telegram module chaos. Can be used interchangably
     update.message.reply_html(card.bot_msg, False)
 
 c_image_handler = CommandHandler('c', c_call)
